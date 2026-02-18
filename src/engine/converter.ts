@@ -31,12 +31,6 @@ const TAG_MAP: Record<string, string> = {
     'blockquote': 'Blockquote',
     'figure': 'Figure',
     'figcaption': 'Figcaption',
-    'button': 'Block',
-    'form': 'Block',
-    'input': 'Block',
-    'label': 'Block',
-    'textarea': 'Block',
-    'select': 'Block',
 };
 
 // Tags to completely ignore during conversion
@@ -456,7 +450,7 @@ export class WebflowConverter {
         // Collect all top-level element children (filter out ignored/empty)
         const topLevelChildren: string[] = [];
         Array.from(doc.body.children).forEach(child => {
-            const childId = this.processElement(child as HTMLElement);
+            const childId = this.processElement(child as Element);
             if (childId) {
                 topLevelChildren.push(childId);
             }
@@ -608,8 +602,8 @@ export class WebflowConverter {
 
         Array.from(element.children).forEach(child => {
             const childTagName = child.tagName.toLowerCase();
-            // Skip script, svg, and style tags entirely (they don't contribute classes)
-            if (childTagName !== 'script' && childTagName !== 'svg' && childTagName !== 'style') {
+            // Skip script and style tags entirely
+            if (childTagName !== 'script' && childTagName !== 'style') {
                 this.collectUsedClasses(child);
             }
         });
@@ -646,7 +640,7 @@ export class WebflowConverter {
     }
 
     // Create a DOM node for custom/unknown elements
-    private createDomNode(el: HTMLElement, classIds: string[]): WebflowNode {
+    private createDomNode(el: Element, classIds: string[]): WebflowNode {
         const tagName = el.tagName.toLowerCase();
 
         // Collect all attributes for DOM node
@@ -691,7 +685,7 @@ export class WebflowConverter {
         // Process children
         Array.from(el.childNodes).forEach(child => {
             if (child.nodeType === Node.ELEMENT_NODE) {
-                const childId = this.processElement(child as HTMLElement);
+                const childId = this.processElement(child as Element);
                 node.children?.push(childId);
             } else if (child.nodeType === Node.TEXT_NODE && child.textContent?.trim()) {
                 const textId = uuidv4();
@@ -707,7 +701,7 @@ export class WebflowConverter {
         return node;
     }
 
-    private processElement(el: HTMLElement): string {
+    private processElement(el: Element): string {
         const tagName = el.tagName.toLowerCase();
 
         // Skip ignored tags - but process their children
@@ -730,14 +724,6 @@ export class WebflowConverter {
         if (tagName === 'script') {
             const scriptHtml = el.outerHTML;
             const embedNode = this.createHtmlEmbed(scriptHtml, true);
-            this.nodes.push(embedNode);
-            return embedNode._id;
-        }
-
-        // Handle SVG tags - wrap in HtmlEmbed
-        if (tagName === 'svg') {
-            const svgHtml = el.outerHTML;
-            const embedNode = this.createHtmlEmbed(svgHtml, false);
             this.nodes.push(embedNode);
             return embedNode._id;
         }
@@ -924,7 +910,7 @@ export class WebflowConverter {
                 // Process children into the wrapper
                 Array.from(el.childNodes).forEach(child => {
                     if (child.nodeType === Node.ELEMENT_NODE) {
-                        const childId = this.processElement(child as HTMLElement);
+                        const childId = this.processElement(child as Element);
                         wrapperNode.children?.push(childId);
                     } else if (child.nodeType === Node.TEXT_NODE && child.textContent?.trim()) {
                         const textId = uuidv4();
@@ -974,7 +960,7 @@ export class WebflowConverter {
         // Process children
         Array.from(el.childNodes).forEach(child => {
             if (child.nodeType === Node.ELEMENT_NODE) {
-                const childId = this.processElement(child as HTMLElement);
+                const childId = this.processElement(child as Element);
                 node.children?.push(childId);
             } else if (child.nodeType === Node.TEXT_NODE && child.textContent?.trim()) {
                 const textId = uuidv4();
