@@ -1,11 +1,18 @@
 {
-  "name": "code-to-webflow",
-  "private": true,
-  "version": "0.0.0",
+  "name": "code-to-webflow-build",
+  "version": "1.0.2",
+  "description": "Production build for Code to Webflow project",
+  "main": "assets/index.js",
+  "files": [
+    "assets",
+    "logo.png"
+  ],
+  "author": "",
+  "license": "ISC",
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview"
   },

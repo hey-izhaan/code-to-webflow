@@ -438,6 +438,31 @@ export class WebflowConverter {
             }
         });
 
+        // Ensure ALL used classes have a Style entry, even if they have no CSS rules
+        this.usedClasses.forEach(className => {
+            if (!this.styleIdMap.has(className)) {
+                const styleId = uuidv4();
+                this.styleIdMap.set(className, styleId);
+                const newStyle: WebflowStyle = {
+                    _id: styleId,
+                    fake: false,
+                    type: 'class',
+                    name: className,
+                    namespace: '',
+                    comb: '',
+                    styleLess: '',
+                    variants: {},
+                    children: [],
+                    createdBy: '61f14380242f626709f24c30',
+                    origin: null,
+                    selector: null
+                };
+                this.styles.push(newStyle);
+                this.styleMap.set(styleId, newStyle);
+            }
+        });
+
+
         // Extract advanced CSS that Webflow can't handle natively
         // Combine external CSS with inline styles (before they're removed from DOM)
         const combinedCss = css + '\n' + Array.from(doc.querySelectorAll('style'))

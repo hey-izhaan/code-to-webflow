@@ -10,4 +10,20 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  build: {
+    outDir: 'dist',
+    rollupOptions: {
+      output: {
+        // Fixed filenames for JS and CSS
+        entryFileNames: `assets/index.js`,
+        chunkFileNames: `assets/[name].js`,
+        assetFileNames: (assetInfo) => {
+          if (assetInfo.name && assetInfo.name.endsWith('.css')) {
+            return `assets/index.css`;
+          }
+          return `assets/[name].[ext]`;
+        },
+      },
+    },
+  },
 })
